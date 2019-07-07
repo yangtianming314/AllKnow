@@ -1,0 +1,42 @@
+<!--miniprogram/pages/course-detail/index.wxml-->
+<!-- 课程封面 -->
+<image class='course-detail-img' src='{{course.img}}' mode='aspectFit'></image>
+
+<!-- 课程介绍 -->
+<view class='course-detail'>
+  <view class='course-detail-title-box'>
+    <text class='course-detail-title' selectable>{{course.title}}</text>
+    <view class='watch'>
+      <image class='watch-img' src='/images/img-watch.svg' mode='aspectFit'></image>
+      <text class='watch-number'>{{course.watch}}</text>
+    </view>
+  </view>
+  <view class='divider'></view>
+  <view class='course-detail-info'>
+    <text class='course-detail-teacher' selectable>{{course.teacher}}</text>
+    <text class='course-detail-teacher-desc' selectable>{{course.teacher_desc}}</text>
+    <text></text>
+  </view>
+  <scroll-view class='tag-scroll' scroll-x style='width: 100%'>
+    <view class='tag-view' wx:for='{{course.tag}}' wx:key='unique'>
+      <view class='tag'>{{item.name}}</view>
+    </view>
+  </scroll-view>
+  <view style='line-height: 40rpx; margin-top: 10rpx'>
+    <text class='course-detail-desc' selectable>{{course.desc}}</text>
+  </view>
+</view>
+
+
+<!-- 来源介绍 -->
+<view class='course-detail' style='margin-bottom: 150rpx;'>
+  <text class='course-detail-title' selectable>{{course.source_name}}</text>
+  <view class='divider'></view>
+  <view class='source'>
+    <text class='course-detail-desc' style='width: 490rpx; margin-right: 20rpx' selectable=''>{{course.source_desc}}</text>
+    <image class='course-img' src='{{course.source_img}}'></image>
+  </view>
+</view>
+
+<!-- 课程链接复制按钮 -->
+<view class='copy-link-button'>一键复制课程链接</view>

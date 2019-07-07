@@ -1,0 +1,13 @@
+<!--pages/search/index.wxml-->
+<!-- 搜索框 -->
+<view class='search'>
+  <view class='search-box'>
+    <image class='search-img' src='/images/img-search.svg' mode='aspectFit'></image>
+    <input class='search-input' placeholder="{{recommend_search}}" focus></input>
+  </view>
+  <view class='search-button' bindtap='onSearch'>搜索</view>
+</view>
+
+<!-- 搜索历史 -->
+
+<!-- 热门推荐 -->
