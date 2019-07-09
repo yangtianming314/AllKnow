@@ -9,20 +9,20 @@
 
 <!-- 轮播图 -->
 <view class='banner-background'>
-  <swiper class='banner-swiper' indicator-dots='{{indicatorDots}}' autoplay='{{autoplay}}' interval='{{interval}}' duration='{{duration}}' circular='{{circular}}'>
+  <swiper class='banner-swiper' indicator-dots='{{indicatorDots}}' autoplay='{{autoplay}}' interval='{{interval}}' duration='{{duration}}' circular='{{circular}}' indicator-color='rgba(230,67,64,.3)' indicator-active-color='#e64340'>
     <block wx:for='{{banner}}' wx:key='unique'>
       <swiper-item>
-        <image src='{{item.url}}' class='banner-img' mode='aspectFill' data-_id='{{item._id}}' bindtap='onBannerTap'></image>
+        <image src='{{item.url}}' class='banner-img' mode='aspectFill' data-_id='{{item.course_info_id}}' bindtap='onBannerTap'></image>
       </swiper-item>
     </block>
   </swiper>
 </view>
 
 <!-- 推荐标签 -->
-<scroll-view class='recommend-tag-scroll' scroll-x style='width: 100%' wx:if='{{tag}}'>
+<scroll-view class='recommend-tag-scroll' scroll-x style='width: 100%' wx:if='{{recommend_tags}}'>
   <view style='width: 20rpx; display: inline-block;'></view>
-  <view class='recommend-tag-view' wx:for='{{tag}}' wx:key='unique'>
-    <view class='recommend-tag' data-search_word='{{item.name}}' bindtap='onTagTap'>{{item.name}}</view>
+  <view class='recommend-tag-view' wx:for='{{recommend_tags}}' wx:key='unique'>
+    <view class='recommend-tag' data-search_word='{{item.tag}}' bindtap='onTagTap'>{{item.tag}}</view>
   </view>
 </scroll-view>
 
@@ -31,7 +31,7 @@
   <text class='one-course-everyday-title'>每日一课</text>
   <view class='divider'></view>
   <view class='course' data-_id='{{one_course_everyday._id}}' bindtap='onCourseTap'>
-    <image class='course-img' src='{{one_course_everyday.img}}' mode='aspectFit'></image>
+    <image class='course-img' src='{{one_course_everyday.img_url}}' mode='aspectFit'></image>
     <view class='course-info'>
       <text class='course-title'>{{one_course_everyday.title}}</text>
       <view class='course-teacher'>
@@ -43,8 +43,8 @@
         <text class='watch-number'>{{one_course_everyday.watch}}</text>
       </view>
       <scroll-view class='tag-scroll' scroll-x style='width: 100%'>
-        <view class='tag-view' wx:for='{{tag}}' wx:key='unique'>
-          <view class='tag' data-search_word='{{item.name}}' bindtap='onTagTap'>{{item.name}}</view>
+        <view class='tag-view' wx:for='{{one_course_everyday.tags}}' wx:key='unique'>
+          <view class='tag' data-search_word='{{item.tag}}' catchtap='onTagTap' hover-stop-propagation='true'>{{item.tag}}</view>
         </view>
       </scroll-view>
     </view>
@@ -54,7 +54,7 @@
 <!-- 课程推荐信息流 -->
 <view class='course-flow' wx:for='{{course}}' wx:key='unique'>
   <view class='course' data-_id='{{item._id}}' bindtap='onCourseTap'>
-    <image class='course-img' src='{{item.img}}' mode='aspectFit'></image>
+    <image class='course-img' src='{{item.img_url}}' mode='aspectFit'></image>
     <view class='course-info'>
       <text class='course-title'>{{item.title}}</text>
       <view class='course-teacher'>
@@ -66,8 +66,8 @@
         <text class='watch-number'>{{item.watch}}</text>
       </view>
       <scroll-view class='tag-scroll' scroll-x style='width: 100%'>
-        <view class='tag-view' wx:for='{{item.tag}}' wx:key='unique'>
-          <view class='tag' data-search_word='{{item.name}}' bindtap='onTagTap'>{{item.name}}</view>
+        <view class='tag-view' wx:for='{{item.tags}}' wx:key='unique'>
+          <view class='tag' data-search_word='{{item.tag}}' catchtap='onTagTap' hover-stop-propagation='true'>{{item.tag}}</view>
         </view>
       </scroll-view>
     </view>

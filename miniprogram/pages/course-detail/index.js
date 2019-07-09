@@ -1,40 +1,86 @@
 // miniprogram/pages/course-detail/index.js
+
+const db = wx.cloud.database()
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    "course":{
-      "url": "",
-      "img": "/images/avatar.png",
-      "title": "课程1课程1课程1课程1课程1课程1课程1课程1课程1课程1课程1课程1课程1课程1课程1",
-      "teacher": "杨天明",
-      "teacher_desc": "hahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahaha",
-      "watch": 2345,
-      "desc": "李善友，混沌大学创办人。本堂超级大课，李善友教授将为你拆解巴菲特、乔布斯、马斯克的思维方式，让你快速掌握顶级高手的思维秘诀",
-      "tag": [{
-        "name": "第一性原理",
-        "score": 0.823,
-      }, {
-        "name": "第二曲线",
-        "score": 0.823,
-      }, {
-        "name": "分形创新",
-        "score": 0.823,
-      }],
-      "source_name": "混沌大学",
-      "source_img": "/images/avatar.png",
-      "source_desc": "混沌大学是一所面向未来的创新大学，创办人李善友。混沌大学是一所面向未来的创新大学，创办人李善友。混沌大学是一所面向未来的创新大学，创办人李善友。混沌大学是一所面向未来的创新大学，创办人李善友。混沌大学是一所面向未来的创新大学，创办人李善友。"
-    }
+    course:'',
+    source:''
+  },
+
+  /**
+   * 获取课程数据
+   */
+  onGetCourseInfo: function(e) {
+    var that = this
+    //console.log(e)
+    db.collection('course_info').doc(e).get({
+      success: function (res) {
+        //console.log(res.data)
+        that.setData({
+          course: res.data
+        })
+        db.collection('source_info').where({
+          source_name: res.data.source_name
+        })
+        .get({
+          success: function(res) {
+            //console.log(res.data[0])
+            that.setData({
+              source: res.data[0]
+            })
+            wx.hideLoading()
+          }
+        })
+      }
+    })
+  },
+
+  /**
+   * 点击一键复制课程链接
+   */
+  onCopyLinkButtonTap: function(e) {
+    var that = this
+    wx.setClipboardData({
+      data: that.data.course.course_url,
+    })
+  },
+
+  /**
+   * 点击课程标签
+   */
+  onTagTap: function(e){
+    wx.redirectTo({
+      url: '/pages/search-result/index?search_word=' + e.currentTarget.dataset.search_word,
+    })
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (e) {
-    var that = this;
+    var that = this
+    //console.log(e._id)
+    wx.showLoading({
+      title: '加载中',
+    })
 
+    //权限问题，增加观看次数无法实现
+    wx.cloud.callFunction({
+      name: 'increase-watch',
+      data: {
+        _id: e._id
+      },
+      success: res => {
+        console.log("云函数调用成功！", res)
+      },
+      fail: console.error
+    })
+    that.onGetCourseInfo(e._id)
   },
 
   /**

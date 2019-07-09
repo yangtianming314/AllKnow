@@ -4,7 +4,7 @@
     "pages/course-detail/index",
     "pages/search-result/index",
     "pages/search/index",
-    "pages/chooseLib/index"
+    "pages/chooseLib/chooseLib"
   ],
   "window": {
     "backgroundColor": "#fafafa",

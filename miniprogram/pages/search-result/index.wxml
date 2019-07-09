@@ -3,15 +3,15 @@
 <view class='search'>
   <view class='search-box'>
     <image class='search-img' src='/images/img-search.svg' mode='aspectFit'></image>
-    <input class='search-input' value="{{search_word}}"></input>
+    <input class='search-input' value="{{search_word}}" bindinput='onSearchInput'></input>
   </view>
-  <view class='search-button' >搜索</view>
+  <view class='search-button' bindtap='onSearchTap'>搜索</view>
 </view>
 
 <!-- 课程搜索结果 -->
 <view class='course-flow' wx:for='{{course}}' wx:key='unique'>
-  <view class='course'>
-    <image class='course-img' src='{{item.img}}' mode='aspectFit'></image>
+  <view class='course' data-_id='{{item._id}}' bindtap='onCourseTap'>
+    <image class='course-img' src='{{item.img_url}}' mode='aspectFit'></image>
     <view class='course-info'>
       <text class='course-title'>{{item.title}}</text>
       <view class='course-teacher'>
@@ -23,8 +23,8 @@
         <text class='watch-number'>{{item.watch}}</text>
       </view>
       <scroll-view class='tag-scroll' scroll-x style='width: 100%'>
-        <view class='tag-view' wx:for='{{item.tag}}' wx:key='unique'>
-          <view class='tag'>{{item.name}}</view>
+        <view class='tag-view' wx:for='{{item.tags}}' wx:key='unique'>
+          <view class='tag' data-search_word='{{item.tag}}' catchtap='onTagTap' hover-stop-propagation='true'>{{item.tag}}</view>
         </view>
       </scroll-view>
     </view>

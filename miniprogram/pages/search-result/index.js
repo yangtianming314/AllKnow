@@ -1,60 +1,34 @@
 // pages/search-result/index.js
+
+const app = getApp()
+const db = wx.cloud.database()
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    "search_word": "",
-    "course": [{
-      "img": "/images/avatar.png",
-      "title": "课程1",
-      "teacher": "杨天明",
-      "teacher_desc": "hahaha",
-      "watch": 2345,
-      "tag": [{
-        "name": "第一性原理",
-        "score": 0.823,
-      }, {
-        "name": "第二曲线",
-        "score": 0.823,
-      }, {
-        "name": "分形创新",
-        "score": 0.823,
-      }, ]
-    }, {
-      "img": "/images/avatar.png",
-      "title": "课程1",
-      "teacher": "杨天明",
-      "teacher_desc": "hahaha",
-      "watch": 2345,
-      "tag": [{
-        "name": "第一性原理",
-        "score": 0.823,
-      }, {
-        "name": "第二曲线",
-        "score": 0.823,
-      }, {
-        "name": "分形创新",
-        "score": 0.823,
-      }, ]
-    }, {
-      "img": "/images/avatar.png",
-      "title": "课程1",
-      "teacher": "杨天明",
-      "teacher_desc": "hahaha",
-      "watch": 2345,
-      "tag": [{
-        "name": "第一性原理",
-        "score": 0.823,
-      }, {
-        "name": "第二曲线",
-        "score": 0.823,
-      }, {
-        "name": "分形创新",
-        "score": 0.823,
-      }, ]
-    }],
+    search_word: '',
+    course: '',
+  },
+
+  /**
+   * 获取搜索输入
+   */
+  onSearchInput: function(e) {
+    var that = this
+    that.setData({
+      search_word: e.detail.value
+    })
+  },
+
+  /**
+   * 点击搜索按钮
+   */
+  onSearchTap: function(e) {
+    var that = this;
+    that.onSearch()
   },
 
   /**
@@ -62,7 +36,77 @@ Page({
    */
   onSearch: function(e) {
     var that = this;
-    
+    wx.showLoading({
+      title: '加载中',
+    })
+    //console.log(app.globalData.access_token)
+    wx.request({
+      url: 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer?charset=UTF-8&access_token=' + app.globalData.access_token,
+      data: {
+        text: that.data.search_word
+      },
+      method: "POST",
+      header: {
+        'content-type': 'application/json'
+      },
+      success: function(res) {
+        //console.log(res.data)
+        var query = []
+        for (var i = 0, len = res.data.items.length; i < len; i++) {
+          query.push(res.data.items[i].item)
+        }
+        //console.log(query)
+        db.collection('course_info').where(db.command.or([{
+            'tags.tag': db.command.in(query)
+          }, {
+            'title': db.RegExp({
+              regexp: that.data.search_word,
+              options: 'i'
+            })
+          },{
+            'teacher': db.RegExp({
+              regexp: that.data.search_word,
+              options: 'i'
+            })
+          },{
+            'desc': db.RegExp({
+              regexp: that.data.search_word,
+              options: 'i'
+            })
+            
+          }]))
+          .get({
+            success: function(res) {
+              //console.log(res.data)
+              that.setData({
+                course: res.data
+              })
+            }
+          })
+        wx.hideLoading()
+      }
+    })
+  },
+
+  /**
+   * 点击标签
+   */
+  onTagTap: function(e) {
+    var that = this
+    wx.redirectTo({
+      url: '/pages/search-result/index?search_word=' + e.currentTarget.dataset.search_word,
+    })
+  },
+
+  /**
+   * 点击课程
+   */
+  onCourseTap: function(e) {
+    var that = this
+    //console.log(e.currentTarget.dataset._id)
+    wx.navigateTo({
+      url: '/pages/course-detail/index?_id=' + e.currentTarget.dataset._id,
+    })
   },
 
   /**
@@ -74,6 +118,8 @@ Page({
     that.setData({
       search_word: e.search_word
     })
+
+    that.onSearch()
   },
 
   /**

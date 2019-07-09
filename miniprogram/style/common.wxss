@@ -35,7 +35,7 @@ page {
 }
 
 .search-recommend {
-  font-size: 24rpx;
+  font-size: 28rpx;
   color: #999;
   margin-left: 20rpx;
 }
@@ -54,6 +54,7 @@ page {
 
 .banner-img {
   width: 100%;
+  height: 240rpx;
 }
 
 .recommend-tag-scroll {
@@ -134,18 +135,16 @@ page {
 }
 
 .course-teacher {
-  line-height: 36rpx;
-}
-
-.course-teacher-name {
   font-size: 24rpx;
   color: #999;
+  line-height: 36rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .course-teacher-desc {
   margin-left: 10rpx;
-  font-size: 24rpx;
-  color: #999;
 }
 
 .watch {

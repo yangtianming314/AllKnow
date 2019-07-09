@@ -9,7 +9,7 @@ page {
 
 .course-detail-img {
   height: 270rpx;
-  width: 270rpx;
+  width: 710rpx;
   margin: 20rpx auto 0rpx auto;
   border-radius: 10rpx;
 }

@@ -1,6 +1,6 @@
 <!--miniprogram/pages/course-detail/index.wxml-->
 <!-- 课程封面 -->
-<image class='course-detail-img' src='{{course.img}}' mode='aspectFit'></image>
+<image class='course-detail-img' src='{{course.img_url}}' mode='aspectFit'></image>
 
 <!-- 课程介绍 -->
 <view class='course-detail'>
@@ -18,8 +18,8 @@
     <text></text>
   </view>
   <scroll-view class='tag-scroll' scroll-x style='width: 100%'>
-    <view class='tag-view' wx:for='{{course.tag}}' wx:key='unique'>
-      <view class='tag'>{{item.name}}</view>
+    <view class='tag-view' wx:for='{{course.tags}}' wx:key='unique'>
+      <view class='tag' data-search_word='{{item.tag}}' bindtap='onTagTap'>{{item.tag}}</view>
     </view>
   </scroll-view>
   <view style='line-height: 40rpx; margin-top: 10rpx'>
@@ -33,10 +33,10 @@
   <text class='course-detail-title' selectable>{{course.source_name}}</text>
   <view class='divider'></view>
   <view class='source'>
-    <text class='course-detail-desc' style='width: 490rpx; margin-right: 20rpx' selectable=''>{{course.source_desc}}</text>
-    <image class='course-img' src='{{course.source_img}}'></image>
+    <text class='course-detail-desc' style='width: 490rpx; margin-right: 20rpx' selectable=''>{{source.source_desc}}</text>
+    <image class='course-img' src='{{source.source_img}}'></image>
   </view>
 </view>
 
 <!-- 课程链接复制按钮 -->
-<view class='copy-link-button'>一键复制课程链接</view>
+<view class='copy-link-button' bindtap='onCopyLinkButtonTap'>一键复制课程链接</view>

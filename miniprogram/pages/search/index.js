@@ -10,6 +10,16 @@ Page({
   },
 
   /**
+   * 获取搜索输入
+   */
+  onSearchInput: function(e) {
+    var that = this
+    that.setData({
+      search_word: e.detail.value
+    })
+  },
+
+  /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (e) {
