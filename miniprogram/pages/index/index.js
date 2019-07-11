@@ -22,49 +22,8 @@ Page({
 
     },
 
-    course: [{
-      "img": "/images/avatar.png",
-      "title": "课程1",
-      "teacher": "杨天明",
-      "teacher_desc": "hahaha",
-      "watch": 2345,
-      "tags": [{
-        "tag": "暂无",
-        "score": 0,
-      }]
-    }, {
-      "img": "/images/avatar.png",
-      "title": "课程1",
-      "teacher": "杨天明",
-      "teacher_desc": "hahaha",
-      "watch": 2345,
-      "tag": [{
-        "name": "第一性原理",
-        "score": 0.823,
-      }, {
-        "name": "第二曲线",
-        "score": 0.823,
-      }, {
-        "name": "分形创新",
-        "score": 0.823,
-      }, ]
-    }, {
-      "img": "/images/avatar.png",
-      "title": "课程1",
-      "teacher": "杨天明",
-      "teacher_desc": "hahaha",
-      "watch": 2345,
-      "tag": [{
-        "name": "第一性原理",
-        "score": 0.823,
-      }, {
-        "name": "第二曲线",
-        "score": 0.823,
-      }, {
-        "name": "分形创新",
-        "score": 0.823,
-      }, ]
-    }, ],
+    course: [],
+    history: [],
     userInfo: {},
     logged: false,
     takeSession: false,
@@ -83,7 +42,7 @@ Page({
     that.getRecommendSearch()
     that.getBanner()
     that.getRecommendTag()
-    
+
     // that.data.setInter = setInterval(function(){
     //   that.updateTag()
     // }, 500)
@@ -92,8 +51,17 @@ Page({
 
   onShow: function(e) {
     var that = this
+    wx.getStorage({
+      key: 'history',
+      success: function (res) {
+        //console.log(res.data)
+        that.setData({
+          history: JSON.parse(res.data)
+        })
+        that.getCourseFlow()
+      }
+    })
     that.getOneCourseEveryDay()
-    that.getCourseFlow()
     that.updateTag()
   },
 
@@ -102,10 +70,10 @@ Page({
    */
   updateTag: function(e) {
     db.collection('course_info').where({
-      has_tag: false
-    })
+        has_tag: false
+      })
       .get({
-        success: function (res) {
+        success: function(res) {
           //console.log(res.data)
           var result = res.data[0]
           //console.log(result._id)
@@ -120,7 +88,7 @@ Page({
             header: {
               'content-type': 'application/json'
             },
-            success: function (res) {
+            success: function(res) {
               //console.log(res)
               //console.log(result)
               wx.cloud.callFunction({
@@ -135,7 +103,6 @@ Page({
                 fail: console.error
               })
             }
-
           })
         }
       })
@@ -215,17 +182,55 @@ Page({
    */
   getCourseFlow: function(e) {
     var that = this
-    db.collection('course_info').where({
-        is_course_flow: true
-      })
+    
+    //console.log(that.data.history)
+    if (that.data.history.length != 0) {
+      var query = that.data.history
+      db.collection('course_info').orderBy('watch', 'desc').where(db.command.or([{
+        'tags.tag': db.command.in(query)
+      }, {
+        'title': db.RegExp({
+          regexp: query[0],
+          options: 'i'
+        })
+      }, {
+        'teacher': db.RegExp({
+          regexp: query[0],
+          options: 'i'
+        })
+      }, {
+        'desc': db.RegExp({
+          regexp: query[0],
+          options: 'i'
+        })
+      }, {
+        'source_name': db.RegExp({
+          regexp: query[0],
+          options: 'i'
+        })
+      }]))
       .get({
-        success: function(res) {
+        success: function(res){
           //console.log(res.data)
           that.setData({
             course: res.data
           })
         }
       })
+    } else {
+      db.collection('course_info').orderBy('watch', 'desc').where({
+          is_course_flow: true
+        })
+        .get({
+          success: function(res) {
+            //console.log(res.data)
+            that.setData({
+              course: res.data
+            })
+          }
+        })
+    }
+
   },
 
   /**

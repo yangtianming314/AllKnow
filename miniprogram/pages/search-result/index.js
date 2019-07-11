@@ -2,6 +2,7 @@
 
 const app = getApp()
 const db = wx.cloud.database()
+const MAX_LIMIT = 20
 
 Page({
 
@@ -11,7 +12,8 @@ Page({
   data: {
     search_word: '',
     course: '',
-    recommend_search: ''
+    recommend_search: '',
+    offset: 0
   },
 
   /**
@@ -29,6 +31,9 @@ Page({
    */
   onSearchTap: function(e) {
     var that = this;
+    that.setData({
+      course: []
+    })
     that.onSearch()
   },
 
@@ -46,6 +51,7 @@ Page({
     wx.showLoading({
       title: '加载中',
     })
+    
     //console.log(app.globalData.access_token)
     wx.request({
       url: 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer?charset=UTF-8&access_token=' + app.globalData.access_token,
@@ -63,7 +69,7 @@ Page({
           query.push(res.data.items[i].item)
         }
         //console.log(query)
-        db.collection('course_info').orderBy('tags.score', 'desc').where(db.command.or([{
+        db.collection('course_info').orderBy('tags.score', 'desc').skip(that.data.offset * MAX_LIMIT).limit(MAX_LIMIT).where(db.command.or([{
             'tags.tag': db.command.in(query)
           }, {
             'title': db.RegExp({
@@ -88,9 +94,12 @@ Page({
           }]))
           .get({
             success: function(res) {
-              //console.log(res.data)
+              console.log(res.data)
+              var course = that.data.course
+              course = course.concat(res.data)
+
               that.setData({
-                course: res.data
+                course: course
               })
             }
           })
@@ -137,7 +146,9 @@ Page({
         })
       }
     })
-
+    that.setData({
+      course: []
+    })
     that.onSearch()
   },
 
@@ -152,7 +163,10 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
-
+    var that = this
+    that.setData({
+      offset: 0
+    })
   },
 
   /**
@@ -185,6 +199,8 @@ Page({
     that.setData({
       offset: offset
     })
+    console.log(that.data.offset)
+    that.onSearch()
   },
 
   /**

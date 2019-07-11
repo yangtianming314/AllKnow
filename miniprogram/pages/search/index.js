@@ -29,6 +29,7 @@ Page({
    */
   onHotSearchTap: function(e) {
     var that = this
+    that.onSaveHistory(e.currentTarget.dataset.search_word)
     wx.navigateTo({
       url: '/pages/search-result/index?search_word=' + e.currentTarget.dataset.search_word,
     })
@@ -68,11 +69,11 @@ Page({
    */
   onShow: function() {
     var that = this
-    console.log("测试点")
+    //console.log("测试点")
     wx.getStorage({
       key: 'history',
       success: function(res) {
-        console.log(res.data)
+        //console.log(res.data)
         that.setData({
           history: JSON.parse(res.data)
         })
@@ -126,8 +127,20 @@ Page({
     } else {
       search_word = that.data.search_word;
     }
+    that.onSaveHistory(search_word)
+    
+    wx.navigateTo({
+      url: '/pages/search-result/index?search_word=' + search_word,
+    })
+  },
+
+  /**
+   * 保存搜索历史
+   */
+  onSaveHistory: function(e) {
+    var that = this
     var history = that.data.history
-    history.unshift(search_word)
+    history.unshift(e)
     if (history.length > 3) {
       history.pop()
     }
@@ -136,8 +149,5 @@ Page({
     console.log(storage_data)
 
     wx.setStorageSync('history', storage_data)
-    wx.navigateTo({
-      url: '/pages/search-result/index?search_word=' + search_word,
-    })
   }
 })
