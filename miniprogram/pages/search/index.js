@@ -1,12 +1,17 @@
 // pages/search/index.js
+
+const db = wx.cloud.database()
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    "search_word": "",
-    "recommend_search": "",
+    "search_word": '',
+    "recommend_search": '',
+    "hot_search": '',
+    "history": []
   },
 
   /**
@@ -20,61 +25,93 @@ Page({
   },
 
   /**
+   * 点击热门搜索词
+   */
+  onHotSearchTap: function(e) {
+    var that = this
+    wx.navigateTo({
+      url: '/pages/search-result/index?search_word=' + e.currentTarget.dataset.search_word,
+    })
+  },
+
+  /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (e) {
+  onLoad: function(e) {
     var that = this;
     that.setData({
       recommend_search: e.recommend_search
     })
+
+    db.collection('hot_search').where({
+        'is_show': true
+      })
+      .get({
+        success: function(res) {
+          //console.log(res.data)
+          that.setData({
+            hot_search: res.data
+          })
+        }
+      })
   },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady: function () {
+  onReady: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow: function () {
-
+  onShow: function() {
+    var that = this
+    console.log("测试点")
+    wx.getStorage({
+      key: 'history',
+      success: function(res) {
+        console.log(res.data)
+        that.setData({
+          history: JSON.parse(res.data)
+        })
+      }
+    })
   },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide: function () {
+  onHide: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload: function () {
+  onUnload: function() {
 
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh: function () {
+  onPullDownRefresh: function() {
 
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom: function () {
+  onReachBottom: function() {
 
   },
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function () {
+  onShareAppMessage: function() {
 
   },
 
@@ -89,6 +126,16 @@ Page({
     } else {
       search_word = that.data.search_word;
     }
+    var history = that.data.history
+    history.unshift(search_word)
+    if (history.length > 3) {
+      history.pop()
+    }
+    //console.log(history)
+    var storage_data = JSON.stringify(history)
+    console.log(storage_data)
+
+    wx.setStorageSync('history', storage_data)
     wx.navigateTo({
       url: '/pages/search-result/index?search_word=' + search_word,
     })

@@ -3,11 +3,27 @@
 <view class='search'>
   <view class='search-box'>
     <image class='search-img' src='/images/img-search.svg' mode='aspectFit'></image>
-    <input class='search-input' placeholder="{{recommend_search}}" focus bindinput='onSearchInput'></input>
+    <input class='search-input' placeholder="{{recommend_search}}" confirm-type='search' bindconfirm='onSearch' focus bindinput='onSearchInput'></input>
   </view>
   <view class='search-button' bindtap='onSearch'>搜索</view>
 </view>
 
 <!-- 搜索历史 -->
+<view class='hot-search'>
+  <view class='hot-search-title'>搜索历史</view>
+  <view class='divider'></view>
+  <block wx:for='{{history}}' wx:key='unique'>
+    <view class='hot-search-word' data-search_word='{{item}}' bindtap='onHotSearchTap'>{{item}}</view>
+    <view class='divider'></view>
+  </block>
+</view>
 
 <!-- 热门推荐 -->
+<view class='hot-search'>
+  <view class='hot-search-title'>热门搜索</view>
+  <view class='divider'></view>
+  <block wx:for='{{hot_search}}' wx:key='unique'>
+    <view class='hot-search-word' data-search_word='{{item.hot_search}}' bindtap='onHotSearchTap'>{{item.hot_search}}</view>
+    <view class='divider'></view>
+  </block>
+</view>

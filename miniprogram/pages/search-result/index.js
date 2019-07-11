@@ -62,7 +62,7 @@ Page({
         for (var i = 0, len = res.data.items.length; i < len; i++) {
           query.push(res.data.items[i].item)
         }
-        console.log(query)
+        //console.log(query)
         db.collection('course_info').orderBy('tags.score', 'desc').where(db.command.or([{
             'tags.tag': db.command.in(query)
           }, {
@@ -180,7 +180,11 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function() {
-
+    var that = this
+    var offset = that.data.offset + 1
+    that.setData({
+      offset: offset
+    })
   },
 
   /**

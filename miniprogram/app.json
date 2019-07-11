@@ -1,9 +1,9 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/search/index",
     "pages/course-detail/index",
     "pages/search-result/index",
-    "pages/search/index",
     "pages/chooseLib/chooseLib"
   ],
   "window": {

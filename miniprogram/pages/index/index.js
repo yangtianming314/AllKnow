@@ -84,12 +84,61 @@ Page({
     that.getBanner()
     that.getRecommendTag()
     
+    // that.data.setInter = setInterval(function(){
+    //   that.updateTag()
+    // }, 500)
+
   },
 
   onShow: function(e) {
     var that = this
     that.getOneCourseEveryDay()
     that.getCourseFlow()
+    that.updateTag()
+  },
+
+  /**
+   * 更新标签
+   */
+  updateTag: function(e) {
+    db.collection('course_info').where({
+      has_tag: false
+    })
+      .get({
+        success: function (res) {
+          //console.log(res.data)
+          var result = res.data[0]
+          //console.log(result._id)
+          //文章标签提取
+          wx.request({
+            url: 'https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?charset=UTF-8&access_token=' + app.globalData.access_token,
+            data: {
+              title: result.title,
+              content: result.desc
+            },
+            method: 'POST',
+            header: {
+              'content-type': 'application/json'
+            },
+            success: function (res) {
+              //console.log(res)
+              //console.log(result)
+              wx.cloud.callFunction({
+                name: 'extraction-tag',
+                data: {
+                  _id: result._id,
+                  tags: res.data.items
+                },
+                success: res => {
+                  //console.log('云函数调用成功', res)
+                },
+                fail: console.error
+              })
+            }
+
+          })
+        }
+      })
   },
 
   /**

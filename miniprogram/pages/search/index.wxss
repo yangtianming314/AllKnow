@@ -1,5 +1,7 @@
 /* pages/search/index.wxss */
 
+@import "../../style/common.wxss";
+
 page {
   background: #fafafa;
   display: flex;
@@ -52,4 +54,20 @@ page {
 .input-placeholder {
   font-size: 28rpx;
   color: #999;
+}
+
+.hot-search {
+  margin: 20rpx 30rpx 0rpx 30rpx;
+}
+
+.hot-search-title{
+  font-size: 32rpx;
+  color: #E64340;
+  margin-bottom: 20rpx;
+}
+
+.hot-search-word{
+  font-size: 28rpx;
+  color: #535353;
+  margin-bottom: 20rpx;
 }
