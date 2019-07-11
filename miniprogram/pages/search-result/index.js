@@ -11,6 +11,7 @@ Page({
   data: {
     search_word: '',
     course: '',
+    recommend_search: ''
   },
 
   /**
@@ -36,6 +37,12 @@ Page({
    */
   onSearch: function(e) {
     var that = this;
+
+    if (that.data.search_word == '') {
+      that.setData({
+        search_word: that.data.recommend_search
+      })
+    }
     wx.showLoading({
       title: '加载中',
     })
@@ -55,25 +62,29 @@ Page({
         for (var i = 0, len = res.data.items.length; i < len; i++) {
           query.push(res.data.items[i].item)
         }
-        //console.log(query)
-        db.collection('course_info').where(db.command.or([{
+        console.log(query)
+        db.collection('course_info').orderBy('tags.score', 'desc').where(db.command.or([{
             'tags.tag': db.command.in(query)
           }, {
             'title': db.RegExp({
               regexp: that.data.search_word,
               options: 'i'
             })
-          },{
+          }, {
             'teacher': db.RegExp({
               regexp: that.data.search_word,
               options: 'i'
             })
-          },{
+          }, {
             'desc': db.RegExp({
               regexp: that.data.search_word,
               options: 'i'
             })
-            
+          },{
+            'source_name': db.RegExp({
+              regexp: that.data.search_word,
+              options: 'i'
+            })
           }]))
           .get({
             success: function(res) {
@@ -117,6 +128,14 @@ Page({
     console.log("搜索的内容：" + e.search_word);
     that.setData({
       search_word: e.search_word
+    })
+    db.collection('recommend_search').limit(1).get({
+      success: function(res) {
+        //console.log("推荐搜索词：" + res.data[0].search_word)
+        that.setData({
+          recommend_search: res.data[0].search_word
+        })
+      }
     })
 
     that.onSearch()

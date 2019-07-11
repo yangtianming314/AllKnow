@@ -3,7 +3,7 @@
 <view class='search'>
   <view class='search-box'>
     <image class='search-img' src='/images/img-search.svg' mode='aspectFit'></image>
-    <input class='search-input' value="{{search_word}}" bindinput='onSearchInput'></input>
+    <input class='search-input' value="{{search_word}}" placeholder='{{recommend_search}}' bindinput='onSearchInput'></input>
   </view>
   <view class='search-button' bindtap='onSearchTap'>搜索</view>
 </view>

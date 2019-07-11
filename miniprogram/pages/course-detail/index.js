@@ -20,7 +20,7 @@ Page({
     //console.log(e)
     db.collection('course_info').doc(e).get({
       success: function (res) {
-        //console.log(res.data)
+        console.log(res.data.tags)
         that.setData({
           course: res.data
         })
