@@ -128,7 +128,7 @@ Page({
       search_word = that.data.search_word;
     }
     that.onSaveHistory(search_word)
-    
+
     wx.navigateTo({
       url: '/pages/search-result/index?search_word=' + search_word,
     })
@@ -140,13 +140,17 @@ Page({
   onSaveHistory: function(e) {
     var that = this
     var history = that.data.history
+    if (history.indexOf(e) != -1) {
+      history.splice(history.indexOf(e), 1)
+    }
+
     history.unshift(e)
     if (history.length > 3) {
       history.pop()
     }
     //console.log(history)
     var storage_data = JSON.stringify(history)
-    console.log(storage_data)
+    //console.log(storage_data)
 
     wx.setStorageSync('history', storage_data)
   }

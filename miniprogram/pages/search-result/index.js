@@ -94,7 +94,7 @@ Page({
           }]))
           .get({
             success: function(res) {
-              console.log(res.data)
+              //console.log(res.data)
               var course = that.data.course
               course = course.concat(res.data)
 
