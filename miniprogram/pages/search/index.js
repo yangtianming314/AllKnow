@@ -29,6 +29,7 @@ Page({
    */
   onHotSearchTap: function(e) {
     var that = this
+    //保存搜索历史
     that.onSaveHistory(e.currentTarget.dataset.search_word)
     wx.navigateTo({
       url: '/pages/search-result/index?search_word=' + e.currentTarget.dataset.search_word,
@@ -40,10 +41,11 @@ Page({
    */
   onLoad: function(e) {
     var that = this;
+    //接收传递来的推荐搜索词
     that.setData({
       recommend_search: e.recommend_search
     })
-
+    //加载热搜词
     db.collection('hot_search').where({
         'is_show': true
       })
@@ -70,6 +72,7 @@ Page({
   onShow: function() {
     var that = this
     //console.log("测试点")
+    //获取搜索历史
     wx.getStorage({
       key: 'history',
       success: function(res) {
@@ -122,6 +125,7 @@ Page({
   onSearch: function(e) {
     var that = this;
     var search_word;
+    //若搜索词为空，按搜索推荐词进行搜索
     if (that.data.search_word == "") {
       search_word = that.data.recommend_search;
     } else {

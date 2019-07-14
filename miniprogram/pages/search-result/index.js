@@ -27,7 +27,7 @@ Page({
   },
 
   /**
-   * 点击搜索按钮
+   * 点击搜索按钮：调用搜索函数
    */
   onSearchTap: function(e) {
     var that = this;
@@ -53,6 +53,7 @@ Page({
     })
     
     //console.log(app.globalData.access_token)
+    //调用分词 api
     wx.request({
       url: 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer?charset=UTF-8&access_token=' + app.globalData.access_token,
       data: {
@@ -64,11 +65,13 @@ Page({
       },
       success: function(res) {
         //console.log(res.data)
+        //将分词存入数组进行查询
         var query = []
         for (var i = 0, len = res.data.items.length; i < len; i++) {
           query.push(res.data.items[i].item)
         }
         //console.log(query)
+        //查询匹配标签、标题、老师、简介、来源
         db.collection('course_info').orderBy('tags.score', 'desc').skip(that.data.offset * MAX_LIMIT).limit(MAX_LIMIT).where(db.command.or([{
             'tags.tag': db.command.in(query)
           }, {
@@ -109,7 +112,7 @@ Page({
   },
 
   /**
-   * 点击标签
+   * 点击标签：跳转搜索结果页
    */
   onTagTap: function(e) {
     var that = this
@@ -119,7 +122,7 @@ Page({
   },
 
   /**
-   * 点击课程
+   * 点击课程：跳转课程详情页
    */
   onCourseTap: function(e) {
     var that = this
@@ -138,6 +141,7 @@ Page({
     that.setData({
       search_word: e.search_word
     })
+    //获得热搜词作为备用
     db.collection('recommend_search').limit(1).get({
       success: function(res) {
         //console.log("推荐搜索词：" + res.data[0].search_word)
@@ -164,6 +168,7 @@ Page({
    */
   onShow: function() {
     var that = this
+    //查询偏移量清零
     that.setData({
       offset: 0
     })
@@ -195,6 +200,7 @@ Page({
    */
   onReachBottom: function() {
     var that = this
+    //触底偏移量自增1，再次查询
     var offset = that.data.offset + 1
     that.setData({
       offset: offset

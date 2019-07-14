@@ -5,7 +5,6 @@ const MAX_LIMIT = 1
 
 Page({
   data: {
-    //测试数据
     recommend_search: '',
     banner: '',
     indicatorDots: true,
@@ -53,7 +52,7 @@ Page({
     var that = this
     wx.getStorage({
       key: 'history',
-      success: function (res) {
+      success: function(res) {
         //console.log(res.data)
         that.setData({
           history: JSON.parse(res.data)
@@ -70,14 +69,14 @@ Page({
    */
   updateTag: function(e) {
     db.collection('course_info').where({
-        has_tag: false
+        has_tag: false //查询条件：若改课程没有标签
       })
       .get({
         success: function(res) {
           //console.log(res.data)
-          var result = res.data[0]
+          var result = res.data[0] //由于百度 api 有 5 QPS/s 的限制，每次只取 1 个符合条件的查询结果
           //console.log(result._id)
-          //文章标签提取
+          //调用文章标签提取 api
           wx.request({
             url: 'https://aip.baidubce.com/rpc/2.0/nlp/v1/keyword?charset=UTF-8&access_token=' + app.globalData.access_token,
             data: {
@@ -90,7 +89,7 @@ Page({
             },
             success: function(res) {
               //console.log(res)
-              //console.log(result)
+              //调用云函数更新课程信息
               wx.cloud.callFunction({
                 name: 'extraction-tag',
                 data: {
@@ -182,42 +181,45 @@ Page({
    */
   getCourseFlow: function(e) {
     var that = this
-    
+
     //console.log(that.data.history)
     if (that.data.history.length != 0) {
-      var query = that.data.history
+      var query = that.data.history //按搜索历史的关键词得到课程推荐信息流
+
+      //查询匹配条件命中标签、标题、老师、简介、来源
       db.collection('course_info').orderBy('watch', 'desc').where(db.command.or([{
-        'tags.tag': db.command.in(query)
-      }, {
-        'title': db.RegExp({
-          regexp: query[0],
-          options: 'i'
-        })
-      }, {
-        'teacher': db.RegExp({
-          regexp: query[0],
-          options: 'i'
-        })
-      }, {
-        'desc': db.RegExp({
-          regexp: query[0],
-          options: 'i'
-        })
-      }, {
-        'source_name': db.RegExp({
-          regexp: query[0],
-          options: 'i'
-        })
-      }]))
-      .get({
-        success: function(res){
-          //console.log(res.data)
-          that.setData({
-            course: res.data
+          'tags.tag': db.command.in(query)
+        }, {
+          'title': db.RegExp({
+            regexp: query[0],
+            options: 'i'
           })
-        }
-      })
+        }, {
+          'teacher': db.RegExp({
+            regexp: query[0],
+            options: 'i'
+          })
+        }, {
+          'desc': db.RegExp({
+            regexp: query[0],
+            options: 'i'
+          })
+        }, {
+          'source_name': db.RegExp({
+            regexp: query[0],
+            options: 'i'
+          })
+        }]))
+        .get({
+          success: function(res) {
+            //console.log(res.data)
+            that.setData({
+              course: res.data
+            })
+          }
+        })
     } else {
+      //如果没有搜索历史，提供一个初始的课程推荐信息流
       db.collection('course_info').orderBy('watch', 'desc').where({
           is_course_flow: true
         })
@@ -234,7 +236,7 @@ Page({
   },
 
   /**
-   * 点击搜索框
+   * 点击搜索框：跳转搜索页面
    */
   onSearchTap: function(e) {
     var that = this
@@ -244,7 +246,7 @@ Page({
   },
 
   /**
-   * 点击轮播图 
+   * 点击轮播图 ：跳转课程详情页
    */
   onBannerTap: function(e) {
     var that = this
@@ -254,7 +256,7 @@ Page({
   },
 
   /**
-   * 点击标签
+   * 点击标签：跳转搜索结果页
    */
   onTagTap: function(e) {
     var that = this
@@ -264,7 +266,7 @@ Page({
   },
 
   /**
-   * 点击课程
+   * 点击课程：跳转课程详情页
    */
   onCourseTap: function(e) {
     var that = this

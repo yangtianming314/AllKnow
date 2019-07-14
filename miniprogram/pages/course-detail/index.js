@@ -13,7 +13,7 @@ Page({
   },
 
   /**
-   * 获取课程数据
+   * 根据传递来的 _id 获取课程数据
    */
   onGetCourseInfo: function(e) {
     var that = this
@@ -24,6 +24,7 @@ Page({
         that.setData({
           course: res.data
         })
+        //得到来源后，查询来源详情信息
         db.collection('source_info').where({
           source_name: res.data.source_name
         })
@@ -45,6 +46,7 @@ Page({
    */
   onCopyLinkButtonTap: function(e) {
     var that = this
+    //将课程链接复制到剪切板
     wx.setClipboardData({
       data: that.data.course.course_url,
     })
@@ -54,6 +56,7 @@ Page({
    * 点击课程标签
    */
   onTagTap: function(e){
+    //重新查询课程标签
     wx.redirectTo({
       url: '/pages/search-result/index?search_word=' + e.currentTarget.dataset.search_word,
     })
@@ -69,7 +72,7 @@ Page({
       title: '加载中',
     })
 
-    //权限问题，增加观看次数无法实现
+    //调用云函数实现观看次数增加
     wx.cloud.callFunction({
       name: 'increase-watch',
       data: {
